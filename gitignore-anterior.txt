@@ -29,6 +29,3 @@ yarn-error.log*
 # Archivos temporales
 tmp/
 temp/
-
-# Configuración local de Supabase
-src/environments/environment.development.ts
