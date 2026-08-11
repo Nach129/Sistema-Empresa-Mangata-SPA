@@ -1,0 +1,14 @@
+<div class="aplicacion">
+  <header>
+    <a routerLink="/perfil" class="marca"><span>M</span><div><strong>Mangata</strong><small>Gestión empresarial</small></div></a>
+    <nav aria-label="Navegación principal">
+      <a routerLink="/perfil" routerLinkActive="activo">Mi perfil</a>
+      @if (autenticacion.perfil()?.rol === RolUsuario.Administrador) { <a routerLink="/usuarios/nuevo" routerLinkActive="activo">Registrar usuario</a> }
+    </nav>
+    <div class="sesion">
+      <span>{{ autenticacion.perfil()?.nombre }} {{ autenticacion.perfil()?.apellido }}</span>
+      <button type="button" (click)="cerrarSesion()" [disabled]="cerrando()">{{ cerrando() ? 'Cerrando…' : 'Cerrar sesión' }}</button>
+    </div>
+  </header>
+  <main><router-outlet /></main>
+</div>

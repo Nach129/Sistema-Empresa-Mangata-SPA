@@ -1,0 +1,32 @@
+<main class="login">
+  <section class="presentacion" aria-label="Mangata Design SPA">
+    <div class="marca">M</div>
+    <p class="sobrelinea">Mangata Design SPA</p>
+    <h1>Gestión simple para un trabajo bien hecho.</h1>
+    <p>Accede de forma segura a las herramientas de tu jornada.</p>
+  </section>
+  <section class="panel">
+    <div class="tarjeta">
+      <p class="sobrelinea">Bienvenido</p>
+      <h2>Iniciar sesión</h2>
+      <p class="ayuda">Ingresa tus credenciales personales.</p>
+      <form [formGroup]="formulario" (ngSubmit)="ingresar()" novalidate>
+        <div class="campo">
+          <label for="correo">Correo electrónico</label>
+          <input id="correo" type="email" formControlName="correo" autocomplete="email" placeholder="nombre@empresa.cl" />
+          <span class="error-campo">@if (formulario.controls.correo.touched && formulario.controls.correo.hasError('required')) { El correo es obligatorio. } @else if (formulario.controls.correo.touched && formulario.controls.correo.hasError('email')) { Ingresa un correo válido. }</span>
+        </div>
+        <div class="campo">
+          <label for="contrasena">Contraseña</label>
+          <div class="contrasena">
+            <input id="contrasena" [type]="mostrarContrasena() ? 'text' : 'password'" formControlName="contrasena" autocomplete="current-password" />
+            <button type="button" class="ver" (click)="mostrarContrasena.set(!mostrarContrasena())" [attr.aria-label]="mostrarContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'">{{ mostrarContrasena() ? 'Ocultar' : 'Mostrar' }}</button>
+          </div>
+          <span class="error-campo">@if (formulario.controls.contrasena.touched && formulario.controls.contrasena.hasError('required')) { La contraseña es obligatoria. }</span>
+        </div>
+        @if (mensajeError()) { <div class="mensaje error" role="alert">{{ mensajeError() }}</div> }
+        <button class="boton" type="submit" [disabled]="formulario.invalid || cargando()">{{ cargando() ? 'Ingresando…' : 'Iniciar sesión' }}</button>
+      </form>
+    </div>
+  </section>
+</main>

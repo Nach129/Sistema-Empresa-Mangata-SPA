@@ -1,1 +1,41 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --color-primario: #213547;
+  --color-acento: #bd7b46;
+  --color-fondo: #f4f6f8;
+  --color-texto: #17212b;
+  --color-suave: #65717c;
+  --color-borde: #dbe1e6;
+  --color-error: #b42318;
+  --color-exito: #067647;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: var(--color-texto);
+  background: var(--color-fondo);
+}
+
+* { box-sizing: border-box; }
+html, body { min-height: 100%; margin: 0; }
+body { min-width: 320px; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+
+.campo { display: grid; gap: .45rem; }
+.campo label { font-size: .9rem; font-weight: 650; }
+.campo input, .campo select {
+  width: 100%; min-height: 45px; padding: .72rem .8rem;
+  border: 1px solid var(--color-borde); border-radius: 9px; background: #fff;
+  color: var(--color-texto); outline: none; transition: border-color .2s, box-shadow .2s;
+}
+.campo input:focus, .campo select:focus { border-color: var(--color-acento); box-shadow: 0 0 0 3px #bd7b4622; }
+.campo input[readonly], .campo select:disabled { background: #eef1f3; color: #59636d; }
+.error-campo { min-height: 1rem; color: var(--color-error); font-size: .8rem; }
+.mensaje { padding: .8rem 1rem; border-radius: 8px; font-size: .9rem; }
+.mensaje.error { color: var(--color-error); background: #fef3f2; border: 1px solid #fecdca; }
+.mensaje.exito { color: var(--color-exito); background: #ecfdf3; border: 1px solid #abefc6; }
+.boton {
+  min-height: 44px; padding: .7rem 1rem; border: 0; border-radius: 9px;
+  background: var(--color-primario); color: #fff; font-weight: 700;
+  transition: opacity .2s, transform .2s;
+}
+.boton:hover:not(:disabled) { transform: translateY(-1px); }
+.boton:disabled { opacity: .58; cursor: not-allowed; }
+.boton.secundario { background: #fff; color: var(--color-primario); border: 1px solid var(--color-borde); }

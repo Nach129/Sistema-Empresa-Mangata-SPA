@@ -1,0 +1,11 @@
+header { min-height: 70px; padding: .75rem clamp(1rem, 4vw, 3.5rem); display: flex; align-items: center; gap: 2rem; color: #fff; background: var(--color-primario); }
+.marca { display: flex; gap: .7rem; align-items: center; color: #fff; text-decoration: none; }
+.marca > span { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid #ffffff66; border-radius: 10px; font: 700 1.2rem Georgia, serif; }
+.marca div { display: grid; }.marca small { color: #bfccd5; font-size: .69rem; }
+nav { display: flex; align-self: stretch; gap: .3rem; margin-left: auto; }
+nav a { display: flex; align-items: center; padding: 0 .9rem; border-radius: 7px; color: #cfdae2; text-decoration: none; font-size: .9rem; }
+nav a:hover, nav a.activo { color: #fff; background: #ffffff12; }
+.sesion { display: flex; align-items: center; gap: .8rem; padding-left: 1rem; border-left: 1px solid #ffffff2e; font-size: .85rem; }
+.sesion button { border: 1px solid #ffffff44; border-radius: 7px; padding: .55rem .7rem; color: #fff; background: transparent; }
+main { padding: clamp(1.2rem, 4vw, 3rem); }
+@media (max-width: 760px) { header { flex-wrap: wrap; gap: .7rem; } nav { order: 3; width: 100%; height: 42px; } .sesion span { display: none; } main { padding: 1rem; } }

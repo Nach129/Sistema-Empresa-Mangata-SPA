@@ -1,0 +1,6 @@
+.contenedor { width: min(100%, 920px); margin: 0 auto; }
+.encabezado { margin-bottom: 1.4rem; }.encabezado p { margin: 0 0 .4rem; color: var(--color-acento); text-transform: uppercase; letter-spacing: .12em; font-size: .75rem; font-weight: 800; }.encabezado h1 { margin: 0 0 .5rem; font: 600 2.25rem Georgia, serif; }.encabezado span { color: var(--color-suave); }
+.tarjeta-formulario { padding: clamp(1.2rem, 4vw, 2.3rem); background: #fff; border: 1px solid var(--color-borde); border-radius: 14px; box-shadow: 0 10px 35px #2637460c; }
+.grilla { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1.2rem; }.ancho { grid-column: 1 / -1; }.campo small { color: var(--color-suave); font-size: .78rem; }.acciones { display: flex; justify-content: flex-end; margin-top: 1rem; }.acciones .boton { min-width: 170px; }.mensaje { margin-top: .8rem; }.estado { color: var(--color-suave); }
+.entrada-contrasena { position: relative; }.entrada-contrasena input { padding-right: 5rem; }.entrada-contrasena button { position: absolute; right: .7rem; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: var(--color-primario); font-size: .78rem; font-weight: 700; }
+@media (max-width: 620px) { .grilla { grid-template-columns: 1fr; }.ancho { grid-column: auto; }.acciones .boton { width: 100%; } }

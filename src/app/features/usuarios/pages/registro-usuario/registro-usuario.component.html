@@ -1,0 +1,16 @@
+<section class="contenedor">
+  <header class="encabezado"><div><p>Administración</p><h1>Registrar usuario</h1><span>Crea una cuenta y asigna su acceso dentro del sistema.</span></div></header>
+  <div class="tarjeta-formulario"><form [formGroup]="formulario" (ngSubmit)="registrar()" novalidate>
+    <div class="grilla">
+      <div class="campo"><label for="nombre">Nombre *</label><input id="nombre" formControlName="nombre" /><span class="error-campo">@if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) { El nombre es obligatorio. }</span></div>
+      <div class="campo"><label for="apellido">Apellido *</label><input id="apellido" formControlName="apellido" /><span class="error-campo">@if (formulario.controls.apellido.touched && formulario.controls.apellido.invalid) { El apellido es obligatorio. }</span></div>
+      <div class="campo"><label for="rut">RUT *</label><input id="rut" formControlName="rut" placeholder="12.345.678-9" /><span class="error-campo">@if (formulario.controls.rut.touched && formulario.controls.rut.invalid) { Ingresa un RUT con formato válido. }</span></div>
+      <div class="campo"><label for="telefono">Teléfono</label><input id="telefono" formControlName="telefono" placeholder="+56 9 1234 5678" /><span class="error-campo">@if (formulario.controls.telefono.touched && formulario.controls.telefono.invalid) { Ingresa un teléfono válido. }</span></div>
+      <div class="campo"><label for="correo">Correo electrónico *</label><input id="correo" type="email" formControlName="correo" autocomplete="off" /><span class="error-campo">@if (formulario.controls.correo.touched && formulario.controls.correo.invalid) { Ingresa un correo válido. }</span></div>
+      <div class="campo"><label for="rol">Rol *</label><select id="rol" formControlName="rol"><option value="">Selecciona un rol</option>@for (rol of roles; track rol) { <option [value]="rol">{{ rol }}</option> }</select><span class="error-campo">@if (formulario.controls.rol.touched && formulario.controls.rol.invalid) { Selecciona un rol válido. }</span></div>
+      <div class="campo ancho"><label for="contrasena">Contraseña inicial *</label><div class="entrada-contrasena"><input id="contrasena" [type]="mostrarContrasena() ? 'text' : 'password'" formControlName="contrasena" autocomplete="new-password" /><button type="button" (click)="mostrarContrasena.set(!mostrarContrasena())">{{ mostrarContrasena() ? 'Ocultar' : 'Mostrar' }}</button></div><small>Mínimo 8 caracteres, con al menos una letra y un número.</small><span class="error-campo">@if (formulario.controls.contrasena.touched && formulario.controls.contrasena.invalid) { La contraseña no cumple los requisitos. }</span></div>
+    </div>
+    @if (mensajeError()) { <div class="mensaje error" role="alert">{{ mensajeError() }}</div> } @if (mensajeExito()) { <div class="mensaje exito" role="status">{{ mensajeExito() }}</div> }
+    <div class="acciones"><button class="boton" type="submit" [disabled]="formulario.invalid || guardando()">{{ guardando() ? 'Registrando…' : 'Registrar usuario' }}</button></div>
+  </form></div>
+</section>
