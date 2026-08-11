@@ -5,6 +5,7 @@
       <a routerLink="/perfil" routerLinkActive="activo">Mi perfil</a>
       @if (autenticacion.perfil()?.rol === RolUsuario.Administrador) { <a routerLink="/usuarios/nuevo" routerLinkActive="activo">Registrar usuario</a> }
       <a routerLink="/productos" routerLinkActive="activo">Productos</a>
+      <a routerLink="/pedidos" routerLinkActive="activo">Pedidos</a>
     </nav>
     <div class="sesion">
       <span>{{ autenticacion.perfil()?.nombre }} {{ autenticacion.perfil()?.apellido }}</span>
