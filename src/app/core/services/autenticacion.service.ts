@@ -43,6 +43,8 @@ export class AutenticacionService {
     this.sesionSignal.set(data.session);
     await this.cargarPerfil(data.user.id);
   }
+  async solicitarRecuperacion(correo:string):Promise<void>{const {error}=await this.supabase.auth.resetPasswordForEmail(correo,{redirectTo:`${window.location.origin}/restablecer-contrasena`});if(error)throw error;}
+  async actualizarContrasena(contrasena:string):Promise<void>{const {data,error:sesionError}=await this.supabase.auth.getSession();if(sesionError||!data.session)throw sesionError??new Error('RECUPERACION_INVALIDA');const {error}=await this.supabase.auth.updateUser({password:contrasena,data:{acceso_pendiente:false}});if(error)throw error;await this.supabase.auth.signOut();this.sesionSignal.set(null);this.perfilSignal.set(null);}
 
   async cargarPerfil(id?: string): Promise<PerfilUsuario> {
     const usuarioId = id ?? this.sesionSignal()?.user.id;

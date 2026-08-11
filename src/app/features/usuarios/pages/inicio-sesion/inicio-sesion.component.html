@@ -24,6 +24,7 @@
           </div>
           <span class="error-campo">@if (formulario.controls.contrasena.touched && formulario.controls.contrasena.hasError('required')) { La contraseña es obligatoria. }</span>
         </div>
+        <a routerLink="/recuperar-contrasena">¿Olvidaste tu contraseña?</a>
         @if (mensajeError()) { <div class="mensaje error" role="alert">{{ mensajeError() }}</div> }
         <button class="boton" type="submit" [disabled]="formulario.invalid || cargando()">{{ cargando() ? 'Ingresando…' : 'Iniciar sesión' }}</button>
       </form>

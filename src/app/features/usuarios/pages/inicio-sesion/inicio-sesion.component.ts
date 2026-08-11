@@ -1,11 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AutenticacionService } from '../../../../core/services/autenticacion.service';
 
 @Component({
   selector: 'app-inicio-sesion',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './inicio-sesion.component.html',
   styleUrl: './inicio-sesion.component.css',
 })

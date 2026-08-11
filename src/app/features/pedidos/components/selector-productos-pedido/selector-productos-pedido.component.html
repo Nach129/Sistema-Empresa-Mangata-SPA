@@ -1,0 +1,6 @@
+<form class="selector" [formGroup]="formulario" (ngSubmit)="confirmar()">
+  <div class="campo"><label for="producto">Producto</label><select id="producto" formControlName="productoId"><option [ngValue]="null">Selecciona un producto</option>@for(p of productos();track p.id){<option [ngValue]="p.id">{{p.nombre}} · {{p.precioBase.toLocaleString('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0})}}</option>}</select></div>
+  <div class="campo"><label for="cantidad">Cantidad</label><input id="cantidad" type="number" min="1" step="1" formControlName="cantidad"><small class="error-campo">@if(formulario.controls.cantidad.touched&&formulario.controls.cantidad.invalid){Ingresa un entero mayor que cero.}</small></div>
+  <div class="campo"><label for="personalizacion">Personalización (opcional)</label><input id="personalizacion" maxlength="500" formControlName="personalizacion" placeholder="Texto, color o indicación especial"></div>
+  <button class="boton" type="submit" [disabled]="formulario.invalid">Agregar</button>
+</form>

@@ -9,7 +9,7 @@ type Rol = typeof roles[number];
 
 interface SolicitudRegistro {
   nombre: string; apellido: string; rut: string; correo: string;
-  telefono: string | null; rol: Rol; contrasena: string;
+  telefono: string | null; rol: Rol; contrasena?: string; sinAcceso?: boolean;
 }
 
 const esSolicitudRegistro = (valor: unknown): valor is SolicitudRegistro => {
@@ -25,8 +25,9 @@ const esSolicitudRegistro = (valor: unknown): valor is SolicitudRegistro => {
     && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos['correo'].trim())
     && telefonoValido
     && typeof datos['rol'] === 'string' && roles.includes(datos['rol'] as Rol)
-    && typeof datos['contrasena'] === 'string' && datos['contrasena'].length >= 8
-    && /[A-Za-z]/.test(datos['contrasena']) && /\d/.test(datos['contrasena']);
+    && ((datos['sinAcceso'] === true && datos['rol'] === 'CLIENTE')
+      || (typeof datos['contrasena'] === 'string' && datos['contrasena'].length >= 8
+        && /[A-Za-z]/.test(datos['contrasena']) && /\d/.test(datos['contrasena'])));
 };
 
 const responder = (estado: number, mensaje: string) => new Response(JSON.stringify({ mensaje }), {
@@ -65,7 +66,11 @@ Deno.serve(async (solicitud) => {
   if (correoRepetido?.length || rutRepetido?.length) return responder(409, 'El correo o el RUT ya se encuentra registrado.');
 
   const { data: creado, error: errorCreacion } = await administrador.auth.admin.createUser({
-    email: correo, password: datos.contrasena, email_confirm: true,
+    email: correo,
+    // La FK perfil.id -> auth.users.id exige identidad aun para clientes presenciales.
+    password: datos.sinAcceso ? `${crypto.randomUUID()}Aa9!` : datos.contrasena,
+    email_confirm: true,
+    user_metadata: datos.sinAcceso ? { acceso_pendiente: true } : {},
   });
   if (errorCreacion || !creado.user) return responder(400, 'No fue posible crear la cuenta. Verifica que el correo no esté registrado.');
 

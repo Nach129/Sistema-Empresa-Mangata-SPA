@@ -25,7 +25,7 @@ export class ProductosComponent {
   readonly categorias = Object.values(CategoriaProducto);
   readonly puedeGestionar = computed(() => {
     const rol = this.autenticacion.perfil()?.rol;
-    return rol === RolUsuario.Administrador || rol === RolUsuario.Trabajador;
+    return rol === RolUsuario.Administrador;
   });
   readonly productosFiltrados = computed(() => {
     const texto = this.busqueda().trim().toLocaleLowerCase('es');

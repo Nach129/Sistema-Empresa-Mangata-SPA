@@ -17,7 +17,7 @@ export const gestorProductosGuard: CanActivateFn = async () => {
   }
 
   const rol = autenticacion.perfil()?.rol;
-  return rol === RolUsuario.Administrador || rol === RolUsuario.Trabajador
+  return rol === RolUsuario.Administrador
     ? true
     : router.createUrlTree(['/productos']);
 };
