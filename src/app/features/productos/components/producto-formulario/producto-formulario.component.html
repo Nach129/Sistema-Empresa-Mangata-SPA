@@ -1,0 +1,49 @@
+<form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+  <div class="grilla-formulario">
+    <div class="campo ancho-completo">
+      <label for="nombre">Nombre *</label>
+      <input id="nombre" formControlName="nombre" placeholder="Ej. Trofeo corporativo clásico" />
+      <span class="error-campo">@if (formulario.controls.nombre.touched && formulario.controls.nombre.hasError('required')) { El nombre es obligatorio. } @else if (formulario.controls.nombre.touched && formulario.controls.nombre.hasError('maxlength')) { El nombre no puede superar 150 caracteres. }</span>
+    </div>
+
+    <div class="campo">
+      <label for="categoria">Categoría *</label>
+      <select id="categoria" formControlName="categoria">
+        <option value="">Selecciona una categoría</option>
+        @for (categoria of categorias; track categoria) { <option [value]="categoria">{{ categoria.replace('_', ' ') }}</option> }
+      </select>
+      <span class="error-campo">@if (formulario.controls.categoria.touched && formulario.controls.categoria.invalid) { Selecciona una categoría válida. }</span>
+    </div>
+
+    <div class="campo">
+      <label for="precioBase">Precio base *</label>
+      <div class="entrada-precio"><span>$</span><input id="precioBase" type="number" min="0" step="1" formControlName="precioBase" /></div>
+      <span class="error-campo">@if (formulario.controls.precioBase.touched && formulario.controls.precioBase.invalid) { Ingresa un precio entero igual o superior a cero. }</span>
+    </div>
+
+    <div class="campo ancho-completo">
+      <label for="material">Material</label>
+      <input id="material" formControlName="material" placeholder="Ej. PLA, acrílico, madera" />
+      <span class="error-campo">@if (formulario.controls.material.touched && formulario.controls.material.hasError('maxlength')) { El material no puede superar 100 caracteres. }</span>
+    </div>
+
+    <div class="campo ancho-completo">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" formControlName="descripcion" rows="4" placeholder="Describe las características principales del producto"></textarea>
+      <span class="contador">{{ formulario.controls.descripcion.value.length }}/1000</span>
+      <span class="error-campo">@if (formulario.controls.descripcion.touched && formulario.controls.descripcion.hasError('maxlength')) { La descripción no puede superar 1000 caracteres. }</span>
+    </div>
+
+    <div class="campo ancho-completo">
+      <label for="imagenUrl">URL de imagen</label>
+      <input id="imagenUrl" type="url" formControlName="imagenUrl" placeholder="https://ejemplo.cl/producto.webp" />
+      <small>Opcional. Debe ser una dirección HTTPS a una imagen JPG, PNG o WebP; no se almacenan archivos ni datos base64 en PostgreSQL.</small>
+      <span class="error-campo">@if (formulario.controls.imagenUrl.touched && formulario.controls.imagenUrl.invalid) { Ingresa una URL HTTPS válida de una imagen JPG, PNG o WebP. }</span>
+    </div>
+
+  </div>
+
+  <div class="acciones-formulario">
+    <button class="boton" type="submit" [disabled]="formulario.invalid || procesando">{{ procesando ? 'Guardando…' : textoBoton }}</button>
+  </div>
+</form>
