@@ -1,0 +1,15 @@
+.login { min-height: 100dvh; display: grid; grid-template-columns: minmax(320px, 1fr) minmax(420px, .8fr); background: #fff; }
+.presentacion { padding: clamp(3rem, 8vw, 8rem); display: flex; flex-direction: column; justify-content: center; color: #fff; background: radial-gradient(circle at 20% 15%, #42617a 0, transparent 35%), linear-gradient(140deg, #172a3a, #213547 58%, #344e61); }
+.marca { width: 52px; height: 52px; display: grid; place-items: center; border: 1px solid #ffffff66; border-radius: 14px; font: 700 1.6rem Georgia, serif; margin-bottom: 2rem; }
+.sobrelinea { color: var(--color-acento); text-transform: uppercase; letter-spacing: .13em; font-weight: 750; font-size: .78rem; }
+.presentacion h1 { max-width: 600px; margin: .8rem 0 1rem; font: 600 clamp(2.2rem, 4.7vw, 4.6rem)/1.05 Georgia, serif; }
+.presentacion > p:last-child { color: #dbe4ea; font-size: 1.05rem; }
+.panel { display: grid; place-items: center; padding: 2rem; }
+.tarjeta { width: min(100%, 430px); }
+.tarjeta h2 { margin: .45rem 0; font-size: 2rem; }
+.ayuda { margin: 0 0 2rem; color: var(--color-suave); }
+form { display: grid; gap: .85rem; }
+.contrasena { position: relative; }
+.contrasena input { padding-right: 5rem; }
+.ver { position: absolute; right: .7rem; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: var(--color-primario); font-size: .78rem; font-weight: 700; }
+@media (max-width: 760px) { .login { grid-template-columns: 1fr; } .presentacion { min-height: 260px; padding: 2.2rem; } .presentacion h1 { font-size: 2.2rem; } .panel { padding: 2rem 1.25rem; } }
