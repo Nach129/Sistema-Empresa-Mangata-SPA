@@ -12,4 +12,4 @@ export interface DatosPedido { clienteId: string; fechaEntrega: string|null; obs
 
 export interface PedidoBaseDatos { id:number; numero_pedido:string; cliente_id:string; estado:EstadoPedido; fecha_solicitud:string; fecha_entrega:string|null; total:number|string; observaciones:string|null; created_at:string; cliente: ClientePedido|null; }
 export interface DetalleBaseDatos { id:number; producto_id:number; cantidad:number; precio_unitario:number|string; subtotal:number|string; personalizacion:string|null; producto: Pick<Producto,'id'|'nombre'|'categoria'|'activo'>|null; }
-export interface HistorialBaseDatos { id:number; estado_anterior:EstadoPedido|null; estado_nuevo:EstadoPedido; observacion:string|null; created_at:string; usuario: { nombre:string; apellido:string }|null; }
+export interface HistorialBaseDatos { id:number; estado_anterior:EstadoPedido|null; estado_nuevo:EstadoPedido; observacion:string|null; created_at:string; responsable_nombre:string|null; responsable_apellido:string|null; }

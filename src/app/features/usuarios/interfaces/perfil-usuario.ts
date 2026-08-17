@@ -24,3 +24,8 @@ export interface NuevoUsuario extends DatosPerfilActualizables {
   rol: RolUsuario;
   contrasena: string;
 }
+
+export interface DatosUsuarioAdministrables extends DatosPerfilActualizables {
+  id: string;
+  rol: RolUsuario;
+}

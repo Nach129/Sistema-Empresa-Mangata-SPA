@@ -3,7 +3,7 @@
     <a routerLink="/perfil" class="marca"><span>M</span><div><strong>Mangata</strong><small>Gestión empresarial</small></div></a>
     <nav aria-label="Navegación principal">
       <a routerLink="/perfil" routerLinkActive="activo">Mi perfil</a>
-      @if (autenticacion.perfil()?.rol === RolUsuario.Administrador) { <a routerLink="/usuarios/nuevo" routerLinkActive="activo">Registrar usuario</a> }
+      @if (autenticacion.perfil()?.rol === RolUsuario.Administrador) { <a routerLink="/usuarios" routerLinkActive="activo">Gestionar usuarios</a> }
       <a routerLink="/productos" routerLinkActive="activo">Productos</a>
       <a routerLink="/pedidos" routerLinkActive="activo">Pedidos</a>
       @if (autenticacion.perfil()?.rol === RolUsuario.Administrador || autenticacion.perfil()?.rol === RolUsuario.Trabajador) { <a routerLink="/reportes" routerLinkActive="activo">Reportes</a> }
