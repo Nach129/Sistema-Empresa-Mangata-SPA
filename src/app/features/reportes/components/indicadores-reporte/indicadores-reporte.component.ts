@@ -1,0 +1,2 @@
+import{Component,input}from'@angular/core';import{IndicadoresReporte}from'../../interfaces/reporte';import{formatearClp}from'../../utils/reporte-utilidades';
+@Component({selector:'app-indicadores-reporte',templateUrl:'./indicadores-reporte.component.html',styleUrl:'./indicadores-reporte.component.css'})export class IndicadoresReporteComponent{readonly indicadores=input.required<IndicadoresReporte>();readonly formatearClp=formatearClp;}

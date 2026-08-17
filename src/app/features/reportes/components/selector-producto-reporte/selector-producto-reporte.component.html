@@ -1,0 +1,39 @@
+<label id="producto-reporte-label">Producto</label>
+<div class="selector">
+  <div class="control">
+  <input
+    #controlProducto
+    class="control-producto"
+    type="text"
+    role="combobox"
+    aria-labelledby="producto-reporte-label"
+    aria-haspopup="listbox"
+    aria-controls="opciones-producto-reporte"
+    autocomplete="off"
+    placeholder="Buscar producto..."
+    [attr.aria-expanded]="abierto()"
+    [disabled]="deshabilitado()"
+    [value]="abierto() ? busqueda() : etiquetaSeleccionada()"
+    (focus)="abrir()"
+    (input)="actualizarBusqueda($event)"
+  />
+  <button class="desplegar" type="button" aria-label="Mostrar productos" [disabled]="deshabilitado()" (click)="alternar($event)"><span aria-hidden="true">⌄</span></button>
+  </div>
+  @if (abierto()) {
+    <div class="panel" (click)="$event.stopPropagation()">
+      <p class="ayuda">Escribe para filtrar productos</p>
+      <div id="opciones-producto-reporte" class="opciones" role="listbox" aria-labelledby="producto-reporte-label">
+        @if (!busqueda()) {
+          <button type="button" role="option" [attr.aria-selected]="valor() === null" [class.seleccionado]="valor() === null" (click)="seleccionar(null)">Todos</button>
+        }
+        @for (producto of productosFiltrados(); track producto.id) {
+          <button type="button" role="option" [attr.aria-selected]="valor() === producto.id" [class.seleccionado]="valor() === producto.id" (click)="seleccionar(producto.id)">
+            <span>{{ producto.nombre }}</span>@if (!producto.activo) { <small>Inactivo</small> }
+          </button>
+        } @empty {
+          <p>No se encontraron productos.</p>
+        }
+      </div>
+    </div>
+  }
+</div>
