@@ -4,6 +4,7 @@ import { administradorGuard } from './core/guards/administrador.guard';
 import { gestorProductosGuard } from './core/guards/gestor-productos.guard';
 import { gestorPedidosGuard } from './core/guards/gestor-pedidos.guard';
 import { operadorPedidosGuard } from './core/guards/operador-pedidos.guard';
+import { reporteGuard } from './core/guards/reporte.guard';
 
 export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./features/usuarios/pages/inicio-sesion/inicio-sesion.component').then(m => m.InicioSesionComponent) },
@@ -24,6 +25,7 @@ export const routes: Routes = [
       { path: 'pedidos/:id/editar', canActivate: [gestorPedidosGuard], loadComponent: () => import('./features/pedidos/pages/editar-pedido/editar-pedido.component').then(m => m.EditarPedidoComponent) },
       { path: 'pedidos/:id', loadComponent: () => import('./features/pedidos/pages/detalle-pedido/detalle-pedido.component').then(m => m.DetallePedidoComponent) },
       { path: 'clientes/:id/pedidos', canActivate: [operadorPedidosGuard], loadComponent: () => import('./features/pedidos/pages/historial-cliente/historial-cliente.component').then(m => m.HistorialClienteComponent) },
+      { path: 'reportes', canActivate: [reporteGuard], loadComponent: () => import('./features/reportes/pages/reportes/reportes.component').then(m => m.ReportesComponent) },
       { path: '', pathMatch: 'full', redirectTo: 'perfil' },
     ],
   },

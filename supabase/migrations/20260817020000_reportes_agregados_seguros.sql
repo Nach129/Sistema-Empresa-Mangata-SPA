@@ -50,5 +50,6 @@ begin
   ) into resultado;
   return resultado;
 end;$$;
+
 revoke all on function public.obtener_reporte_general(date,date,varchar,bigint) from public,anon;
 grant execute on function public.obtener_reporte_general(date,date,varchar,bigint) to authenticated;
