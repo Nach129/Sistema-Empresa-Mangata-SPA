@@ -198,7 +198,7 @@ erDiagram
     PERFIL ||--o{ HISTORIAL_PEDIDO : "actualiza"
 
     PERFIL {
-        uuid id PK_FK
+        uuid id PK, FK
         varchar nombre
         varchar apellido
         varchar rut UK
