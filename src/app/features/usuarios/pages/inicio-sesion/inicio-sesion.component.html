@@ -1,13 +1,13 @@
 <main class="login">
   <section class="presentacion" aria-label="Mangata Design SPA">
-    <div class="marca">M</div>
-    <p class="sobrelinea">Mangata Design SPA</p>
-    <h1>Gestión simple para un trabajo bien hecho.</h1>
-    <p>Accede de forma segura a las herramientas de tu jornada.</p>
+    <div class="identidad"><img class="marca" src="/assets/logo-mangata.jpg" alt="Logo de Mangata" /><div><strong>Mangata</strong><span>Gestión empresarial</span></div></div>
+    <div class="mensaje-marca"><p class="sobrelinea">Espacio de trabajo</p><h1>Orden para crear.<br>Claridad para crecer.</h1><p>Gestión de clientes, productos y pedidos en un solo lugar.</p></div>
+    <small>Mangata Design SPA</small>
   </section>
   <section class="panel">
     <div class="tarjeta">
-      <p class="sobrelinea">Bienvenido</p>
+      <div class="marca-movil"><img src="/assets/logo-mangata.jpg" alt="Logo de Mangata" /><strong>Mangata</strong></div>
+      <p class="sobrelinea">Acceso seguro</p>
       <h2>Iniciar sesión</h2>
       <p class="ayuda">Ingresa tus credenciales personales.</p>
       <form [formGroup]="formulario" (ngSubmit)="ingresar()" novalidate>

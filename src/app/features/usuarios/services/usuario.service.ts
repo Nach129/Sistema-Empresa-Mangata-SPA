@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { AutenticacionService } from '../../../core/services/autenticacion.service';
 import { SupabaseService } from '../../../core/services/supabase.service';
+import { normalizarDatosFormularioUsuario } from '../../../shared/validators/datos-usuario.validators';
 import { DatosPerfilActualizables, DatosUsuarioAdministrables, NuevoUsuario, PerfilUsuario } from '../interfaces/perfil-usuario';
 
 interface RespuestaAdministrativa {
@@ -21,7 +22,8 @@ export class UsuarioService {
   private readonly autenticacion = inject(AutenticacionService);
 
   async registrarUsuario(usuario: NuevoUsuario): Promise<void> {
-    const { error } = await this.supabase.functions.invoke('registrar-usuario', { body: usuario });
+    const normalizados = normalizarDatosFormularioUsuario({ ...usuario, telefono: usuario.telefono ?? '' });
+    const { error } = await this.supabase.functions.invoke('registrar-usuario', { body: { ...normalizados, telefono: normalizados.telefono || null } });
     if (error) throw error;
   }
 
@@ -37,7 +39,9 @@ export class UsuarioService {
   }
 
   async actualizarUsuario(datos: DatosUsuarioAdministrables): Promise<PerfilUsuario> {
-    const respuesta = await this.invocarAdministracion({ accion: 'actualizar', usuario: datos });
+    const normalizados = normalizarDatosFormularioUsuario({ ...datos, telefono: datos.telefono ?? '' });
+    const usuario = { ...normalizados, telefono: normalizados.telefono || null };
+    const respuesta = await this.invocarAdministracion({ accion: 'actualizar', usuario });
     if (!respuesta.usuario) throw new Error('ERROR_ACTUALIZACION');
     if (datos.id === this.autenticacion.perfil()?.id) this.autenticacion.actualizarPerfilLocal(respuesta.usuario);
     return respuesta.usuario;
@@ -50,13 +54,26 @@ export class UsuarioService {
 
   async actualizarPerfil(datos: DatosPerfilActualizables): Promise<PerfilUsuario> {
     const perfilActual = this.autenticacion.perfil() ?? await this.autenticacion.cargarPerfil();
-    const correoCambio = datos.correo.trim().toLowerCase() !== perfilActual.correo.toLowerCase();
+    const normalizadosFormulario = normalizarDatosFormularioUsuario({ ...datos, telefono: datos.telefono ?? '' });
+    const normalizados = { ...normalizadosFormulario, telefono: normalizadosFormulario.telefono || null };
+    const actualesFormulario = normalizarDatosFormularioUsuario({ ...perfilActual, telefono: perfilActual.telefono ?? '' });
+    const actuales = { ...actualesFormulario, telefono: actualesFormulario.telefono || null };
+    const cambios: Partial<DatosPerfilActualizables> = {};
+    const campos = ['nombre', 'apellido', 'rut', 'correo', 'telefono'] as const;
+    for (const campo of campos) {
+      if (normalizados[campo] !== actuales[campo]) cambios[campo] = normalizados[campo] as never;
+    }
+    if (!Object.keys(cambios).length) return perfilActual;
+    const correoCambio = cambios.correo !== undefined;
     if (correoCambio) {
-      const { error: errorAuth } = await this.supabase.auth.updateUser({ email: datos.correo.trim().toLowerCase() });
+      const { error: errorAuth } = await this.supabase.auth.updateUser({ email: cambios.correo });
       if (errorAuth) throw errorAuth;
     }
-    const { data, error } = await this.supabase.from('perfil').update({ ...datos, correo: datos.correo.trim().toLowerCase() }).eq('id', perfilActual.id).select('*').single();
-    if (error) throw error;
+    const { data, error } = await this.supabase.from('perfil').update(cambios).eq('id', perfilActual.id).select('*').single();
+    if (error) {
+      if (correoCambio) await this.supabase.auth.updateUser({ email: perfilActual.correo });
+      throw error;
+    }
     const perfil = data as PerfilUsuario;
     this.autenticacion.actualizarPerfilLocal(perfil);
     return perfil;

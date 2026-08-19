@@ -1,1 +1,120 @@
-:host{display:block;position:relative}label{display:block;margin-bottom:.35rem;font-size:.8rem;font-weight:700}.selector{position:relative}.control{position:relative;display:flex}.control-producto{width:100%;height:43px;padding:0 2.5rem 0 .8rem;border:1px solid var(--color-borde);border-radius:8px;background:#fff;color:var(--color-texto);font:inherit;text-overflow:ellipsis}.control-producto:hover:not(:disabled){border-color:var(--color-acento)}.control-producto:focus{border-color:var(--color-acento)}.control-producto:focus-visible,.desplegar:focus-visible,.opciones button:focus-visible{outline:3px solid #bd7b4640;outline-offset:1px}.control-producto:disabled{background:#f1f3f4;color:var(--color-suave)}.desplegar{position:absolute;top:1px;right:1px;width:39px;height:41px;border:0;border-radius:0 7px 7px 0;background:transparent;color:var(--color-suave);font-size:1rem;cursor:pointer}.desplegar:hover:not(:disabled){color:var(--color-acento)}.panel{position:absolute;z-index:30;top:calc(100% + .35rem);left:0;width:max(100%,280px);padding:.45rem;background:#fff;border:1px solid var(--color-borde);border-radius:10px;box-shadow:0 14px 35px #1f394c24}.ayuda{margin:.15rem .45rem .35rem;color:var(--color-suave);font-size:.72rem}.opciones{max-height:235px;overflow-y:auto;padding-right:.15rem}.opciones button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.65rem .7rem;border:0;border-radius:6px;background:transparent;color:var(--color-texto);font:inherit;text-align:left;cursor:pointer}.opciones button:hover,.opciones button.seleccionado{background:#eef3f6}.opciones button.seleccionado{color:var(--color-acento);font-weight:700}.opciones small{padding:.12rem .35rem;border-radius:4px;background:#e9edf0;color:var(--color-suave);font-size:.65rem;text-transform:uppercase}.opciones p{margin:.6rem;padding:.7rem;color:var(--color-suave);font-size:.82rem;text-align:center}@media(max-width:650px){.panel{width:100%}}
+:host {
+  display: block;
+  position: relative;
+}
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.selector {
+  position: relative;
+}
+.control {
+  position: relative;
+  display: flex;
+}
+.control-producto {
+  width: 100%;
+  height: 44px;
+  padding: 0 42px 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  text-overflow: ellipsis;
+  outline: none;
+}
+.control-producto:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+}
+.control-producto:focus {
+  border-color: var(--color-accent);
+  box-shadow: var(--focus-ring);
+}
+.control-producto:disabled {
+  background: #eef1f2;
+  color: var(--color-text-secondary);
+}
+.desplegar {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 40px;
+  height: 42px;
+  border: 0;
+  border-radius: 0 9px 9px 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+.desplegar:hover:not(:disabled) {
+  color: var(--color-accent);
+  background: var(--color-surface-muted);
+}
+.panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  width: max(100%, 280px);
+  padding: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: 0 14px 35px rgb(31 57 76 / 15%);
+}
+.ayuda {
+  margin: 3px 7px 6px;
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+}
+.opciones {
+  max-height: 235px;
+  overflow-y: auto;
+}
+.opciones button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.84rem;
+  text-align: left;
+}
+.opciones button:hover,
+.opciones button.seleccionado {
+  background: var(--color-primary-soft);
+}
+.opciones button.seleccionado {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+.opciones small {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: #e9edf0;
+  color: var(--color-text-secondary);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+}
+.opciones p {
+  margin: 6px;
+  padding: 10px;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  text-align: center;
+}
+@media (max-width: 650px) {
+  .panel {
+    width: 100%;
+  }
+}

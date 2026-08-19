@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { RolUsuario } from '../../../../shared/enums/rol-usuario';
+import { CampoNormalizableUsuario, normalizarCampoUsuario, normalizarDatosFormularioUsuario, validadoresContrasenaUsuario, validadoresCorreoUsuario, validadoresNombrePersona, validadoresRolUsuario, validadoresRutUsuario, validadoresTelefonoUsuario } from '../../../../shared/validators/datos-usuario.validators';
 import { UsuarioService } from '../../services/usuario.service';
 
 @Component({ selector: 'app-registro-usuario', imports: [ReactiveFormsModule, RouterLink], templateUrl: './registro-usuario.component.html', styleUrl: '../formulario-usuario.css' })
@@ -10,21 +11,25 @@ export class RegistroUsuarioComponent {
   readonly roles = Object.values(RolUsuario); readonly guardando = signal(false); readonly mostrarContrasena = signal(false);
   readonly mensajeError = signal(''); readonly mensajeExito = signal('');
   readonly formulario = this.fb.nonNullable.group({
-    nombre: ['', [Validators.required, Validators.maxLength(100)]], apellido: ['', [Validators.required, Validators.maxLength(100)]],
-    rut: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.?(?:\d{3}\.?){2}-[\dkK]$/)]],
-    correo: ['', [Validators.required, Validators.email, Validators.maxLength(150)]],
-    telefono: ['', [Validators.maxLength(20), Validators.pattern(/^$|^[+\d][\d\s()-]{7,19}$/)]],
-    rol: ['', [Validators.required, Validators.pattern(/^(ADMINISTRADOR|TRABAJADOR|CLIENTE)$/)]],
-    contrasena: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d).+$/)]],
+    nombre: ['', validadoresNombrePersona()], apellido: ['', validadoresNombrePersona()],
+    rut: ['', validadoresRutUsuario()], correo: ['', validadoresCorreoUsuario()],
+    telefono: ['', validadoresTelefonoUsuario()], rol: ['', validadoresRolUsuario()],
+    contrasena: ['', validadoresContrasenaUsuario()],
   });
   async registrar(): Promise<void> {
+    this.formulario.patchValue(normalizarDatosFormularioUsuario(this.formulario.getRawValue()));
     this.formulario.markAllAsTouched(); if (this.formulario.invalid || this.guardando()) return;
     this.guardando.set(true); this.mensajeError.set(''); this.mensajeExito.set('');
     try {
       const v = this.formulario.getRawValue();
-      await this.usuarios.registrarUsuario({ nombre: v.nombre.trim(), apellido: v.apellido.trim(), rut: v.rut.trim(), correo: v.correo.trim().toLowerCase(), telefono: v.telefono.trim() || null, rol: v.rol as RolUsuario, contrasena: v.contrasena });
+      await this.usuarios.registrarUsuario({ nombre: v.nombre, apellido: v.apellido, rut: v.rut, correo: v.correo, telefono: v.telefono || null, rol: v.rol as RolUsuario, contrasena: v.contrasena });
       await this.router.navigate(['/usuarios'], { state: { mensaje: 'Usuario registrado correctamente.' } });
     } catch { this.mensajeError.set('No fue posible registrar al usuario. Verifica que el correo y el RUT no estén registrados.'); }
     finally { this.guardando.set(false); }
+  }
+
+  normalizarCampo(campo: CampoNormalizableUsuario): void {
+    const control = this.formulario.controls[campo];
+    control.setValue(normalizarCampoUsuario(campo, control.value));
   }
 }

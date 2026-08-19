@@ -16,7 +16,7 @@ describe('EditarUsuarioComponent', () => {
   };
 
   beforeEach(async () => {
-    servicio.obtenerUsuario.mockClear();
+    servicio.obtenerUsuario.mockReset().mockResolvedValue(usuario);
     servicio.actualizarUsuario.mockClear();
     await TestBed.configureTestingModule({
       imports: [EditarUsuarioComponent],
@@ -44,13 +44,38 @@ describe('EditarUsuarioComponent', () => {
     expect(servicio.actualizarUsuario).not.toHaveBeenCalled();
   });
 
+  it('detecta contenido inválido pegado en todos los datos personales', async () => {
+    const fixture = TestBed.createComponent(EditarUsuarioComponent);
+    await fixture.whenStable();
+    const formulario = fixture.componentInstance.formulario;
+    formulario.patchValue({ nombre: 'Andrea123', apellido: 'Navia@', rut: '11.111.111-2', telefono: '9abc5678', correo: 'andrea correo@mangata.cl' });
+    expect(formulario.controls.nombre.invalid).toBe(true);
+    expect(formulario.controls.apellido.invalid).toBe(true);
+    expect(formulario.controls.rut.invalid).toBe(true);
+    expect(formulario.controls.telefono.invalid).toBe(true);
+    expect(formulario.controls.correo.invalid).toBe(true);
+  });
+
   it('normaliza y envía únicamente los campos administrables', async () => {
     const fixture = TestBed.createComponent(EditarUsuarioComponent);
     await fixture.whenStable();
     const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-    fixture.componentInstance.formulario.patchValue({ nombre: ' Andrea ', correo: 'ANDREA@MANGATA.CL', rol: RolUsuario.Cliente });
+    fixture.componentInstance.formulario.patchValue({ nombre: ' Andrea ', correo: 'ANDREA@MANGATA.CL', telefono: '912345678', rol: RolUsuario.Cliente });
     await fixture.componentInstance.guardar();
-    expect(servicio.actualizarUsuario).toHaveBeenCalledWith(expect.objectContaining({ id: usuario.id, nombre: 'Andrea', correo: 'andrea@mangata.cl', rol: RolUsuario.Cliente }));
+    expect(servicio.actualizarUsuario).toHaveBeenCalledWith(expect.objectContaining({ id: usuario.id, nombre: 'Andrea', correo: 'andrea@mangata.cl', telefono: '+56912345678', rol: RolUsuario.Cliente }));
+    expect(navegar).toHaveBeenCalled();
+  });
+
+  it('habilita guardar un apellido válido aunque el RUT histórico sin modificar sea inválido', async () => {
+    servicio.obtenerUsuario.mockResolvedValueOnce({ ...usuario, rut: '21.459.476-6' });
+    const fixture = TestBed.createComponent(EditarUsuarioComponent);
+    await fixture.whenStable();
+    expect(fixture.componentInstance.formulario.invalid).toBe(true);
+    fixture.componentInstance.formulario.controls.apellido.setValue('Alfaro');
+    expect(fixture.componentInstance.puedeGuardar()).toBe(true);
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    await fixture.componentInstance.guardar();
+    expect(servicio.actualizarUsuario).toHaveBeenCalledWith(expect.objectContaining({ apellido: 'Alfaro', rut: '21.459.476-6' }));
     expect(navegar).toHaveBeenCalled();
   });
 });

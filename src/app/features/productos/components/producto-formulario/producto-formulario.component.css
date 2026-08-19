@@ -1,12 +1,55 @@
-.grilla-formulario { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem 1.2rem; }
-.ancho-completo { grid-column: 1 / -1; }
-.campo textarea { width: 100%; resize: vertical; min-height: 110px; padding: .72rem .8rem; border: 1px solid var(--color-borde); border-radius: 9px; color: var(--color-texto); font: inherit; outline: none; }
-.campo textarea:focus { border-color: var(--color-acento); box-shadow: 0 0 0 3px #bd7b4622; }
-.campo small, .contador { color: var(--color-suave); font-size: .78rem; }
-.contador { justify-self: end; margin-top: -.25rem; }
-.entrada-precio { position: relative; }
-.entrada-precio span { position: absolute; left: .85rem; top: 50%; transform: translateY(-50%); color: var(--color-suave); font-weight: 700; }
-.entrada-precio input { padding-left: 1.8rem; }
-.acciones-formulario { display: flex; justify-content: flex-end; margin-top: 1rem; }
-.acciones-formulario .boton { min-width: 190px; }
-@media (max-width: 640px) { .grilla-formulario { grid-template-columns: 1fr; } .ancho-completo { grid-column: auto; } .acciones-formulario .boton { width: 100%; } }
+.grilla-formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 20px;
+}
+.ancho-completo {
+  grid-column: 1/-1;
+}
+.campo textarea {
+  min-height: 110px;
+}
+.campo small,
+.contador {
+  color: var(--color-text-secondary);
+  font-size: 0.77rem;
+}
+.contador {
+  justify-self: end;
+  margin-top: -3px;
+}
+.entrada-precio {
+  position: relative;
+}
+.entrada-precio span {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+  font-weight: 700;
+}
+.entrada-precio input {
+  padding-left: 28px;
+}
+.acciones-formulario {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+.acciones-formulario .boton {
+  min-width: 170px;
+}
+@media (max-width: 640px) {
+  .grilla-formulario {
+    grid-template-columns: 1fr;
+  }
+  .ancho-completo {
+    grid-column: auto;
+  }
+  .acciones-formulario .boton {
+    width: 100%;
+  }
+}

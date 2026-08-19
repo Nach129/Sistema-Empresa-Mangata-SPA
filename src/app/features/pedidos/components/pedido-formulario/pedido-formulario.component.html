@@ -1,12 +1,221 @@
 <form class="formulario-pedido" [formGroup]="formulario" (ngSubmit)="enviar()">
- <section class="panel"><header><span>1</span><div><h2>Datos del pedido</h2><p>Selecciona un cliente existente o regístralo aquí mismo.</p></div></header><div class="datos">
-  <div class="campo"><div class="etiqueta-accion"><label for="cliente">Cliente *</label>@if(!esEdicion()){<button type="button" (click)="mostrandoCliente.set(true)">+ Nuevo cliente</button>}</div><select id="cliente" formControlName="clienteId"><option value="">Selecciona un cliente</option>@for(c of todosLosClientes();track c.id){<option [value]="c.id">{{c.nombre}} {{c.apellido}} · {{c.rut}}</option>}</select><small class="error-campo">@if(formulario.controls.clienteId.touched&&formulario.controls.clienteId.invalid){Selecciona un cliente.}</small></div>
-  <div class="campo"><label for="fecha">Fecha de entrega</label><input id="fecha" type="date" [min]="hoy" formControlName="fechaEntrega"></div>
-  <div class="campo ancho"><label for="obs">Observaciones</label><textarea id="obs" maxlength="1000" rows="3" formControlName="observaciones" placeholder="Información general del pedido"></textarea></div>
- </div></section>
- <section class="panel"><header><span>2</span><div><h2>Agregar productos</h2><p>El precio vigente se conservará en el pedido.</p></div></header><app-selector-productos-pedido [productos]="productos()" [idsAgregados]="idsAgregados()" (agregar)="agregarLinea($event)" (error)="mensajeLinea.set($event)"/></section>
- <section class="panel"><header><span>3</span><div><h2>Detalle actual</h2><p>Revisa cantidades, personalizaciones y subtotales.</p></div></header>
- @if(mensajeLinea()){<div class="mensaje error">{{mensajeLinea()}}</div>} @if(lineas().length){<div class="tabla-wrap"><table><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Personalización</th><th>Subtotal</th><th></th></tr></thead><tbody>@for(l of lineas();track l.productoId;let i=$index){<tr><td><strong>{{l.nombre}}</strong></td><td><input class="cantidad" type="number" min="1" step="1" [value]="l.cantidad" (change)="cambiarCantidad(i,$event)"></td><td>{{l.precioUnitario.toLocaleString('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0})}}</td><td>{{l.personalizacion||'—'}}</td><td><strong>{{l.subtotal.toLocaleString('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0})}}</strong></td><td><button class="quitar" type="button" (click)="quitar(i)">Quitar</button></td></tr>}</tbody></table></div>}@else{<p class="vacio">Aún no has agregado productos.</p>}
- <footer><div><span>{{lineas().length}} producto(s)</span><strong>Total {{total().toLocaleString('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0})}}</strong></div><button class="boton" type="submit" [disabled]="procesando()||formulario.invalid||!lineas().length">{{procesando()?'Guardando…':(esEdicion()?'Guardar cambios':'Registrar pedido')}}</button></footer></section>
+  <div class="flujo-principal">
+    <section class="panel">
+      <header>
+        <span>1</span>
+        <div>
+          <h2>Datos del pedido</h2>
+          <p>Selecciona un cliente existente o regístralo aquí mismo.</p>
+        </div>
+      </header>
+      <div class="datos">
+        <div class="campo">
+          <div class="etiqueta-accion">
+            <label for="cliente">Cliente *</label>
+            @if (!esEdicion()) {
+              <button type="button" (click)="mostrandoCliente.set(true)">+ Nuevo cliente</button>
+            }
+          </div>
+          <select id="cliente" formControlName="clienteId">
+            <option value="">Selecciona un cliente</option>
+            @for (c of todosLosClientes(); track c.id) {
+              <option [value]="c.id">{{ c.nombre }} {{ c.apellido }} · {{ c.rut }}</option>
+            }</select
+          ><small class="error-campo">
+            @if (formulario.controls.clienteId.touched && formulario.controls.clienteId.invalid) {
+              Selecciona un cliente.
+            }
+          </small>
+        </div>
+        <div class="campo">
+          <label for="fecha">Fecha de entrega</label
+          ><input id="fecha" type="date" [min]="hoy" formControlName="fechaEntrega" />
+        </div>
+        <div class="campo ancho">
+          <label for="obs">Observaciones</label
+          ><textarea
+            id="obs"
+            maxlength="1000"
+            rows="3"
+            formControlName="observaciones"
+            placeholder="Información general del pedido"
+          ></textarea>
+        </div>
+      </div>
+    </section>
+    <section class="panel">
+      <header>
+        <span>2</span>
+        <div>
+          <h2>Agregar productos</h2>
+          <p>El precio vigente se conservará en el pedido.</p>
+        </div>
+      </header>
+      <app-selector-productos-pedido
+        [productos]="productos()"
+        [idsAgregados]="idsAgregados()"
+        (agregar)="agregarLinea($event)"
+        (error)="mensajeLinea.set($event)"
+      />
+    </section>
+    <section class="panel detalle-productos">
+      <header>
+        <span>3</span>
+        <div>
+          <h2>Productos añadidos</h2>
+          <p>Revisa cantidades, personalizaciones y subtotales.</p>
+        </div>
+      </header>
+      @if (mensajeLinea()) {
+        <div class="mensaje error">{{ mensajeLinea() }}</div>
+      }
+      @if (lineas().length) {
+        <div class="tabla-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Personalización</th>
+                <th>Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (l of lineas(); track l.productoId; let i = $index) {
+                <tr>
+                  <td>
+                    <strong>{{ l.nombre }}</strong>
+                  </td>
+                  <td>
+                    <input
+                      class="cantidad"
+                      type="number"
+                      min="1"
+                      step="1"
+                      [value]="l.cantidad"
+                      (change)="cambiarCantidad(i, $event)"
+                    />
+                  </td>
+                  <td>
+                    {{
+                      l.precioUnitario.toLocaleString('es-CL', {
+                        style: 'currency',
+                        currency: 'CLP',
+                        maximumFractionDigits: 0,
+                      })
+                    }}
+                  </td>
+                  <td>{{ l.personalizacion || '—' }}</td>
+                  <td>
+                    <strong>{{
+                      l.subtotal.toLocaleString('es-CL', {
+                        style: 'currency',
+                        currency: 'CLP',
+                        maximumFractionDigits: 0,
+                      })
+                    }}</strong>
+                  </td>
+                  <td><button class="quitar" type="button" (click)="quitar(i)">Quitar</button></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="vacio">Aún no has agregado productos.</p>
+      }
+    </section>
+  </div>
+  <aside class="resumen-pedido">
+    <p>Resumen</p>
+    <h2>{{ esEdicion() ? 'Actualizar pedido' : 'Nuevo pedido' }}</h2>
+    <dl>
+      <div>
+        <dt>Productos añadidos</dt>
+        <dd>{{ lineas().length }}</dd>
+      </div>
+      <div>
+        <dt>Estado</dt>
+        <dd>{{ lineas().length ? 'Listo para revisar' : 'Incompleto' }}</dd>
+      </div>
+    </dl>
+    <div class="total-resumen">
+      <span>Total estimado</span
+      ><strong>{{
+        total().toLocaleString('es-CL', {
+          style: 'currency',
+          currency: 'CLP',
+          maximumFractionDigits: 0,
+        })
+      }}</strong>
+    </div>
+    <button
+      class="boton"
+      type="submit"
+      [disabled]="procesando() || formulario.invalid || !lineas().length"
+    >
+      {{ procesando() ? 'Guardando…' : esEdicion() ? 'Guardar cambios' : 'Registrar pedido' }}
+    </button>
+    <small>Comprueba los datos y productos antes de confirmar.</small>
+  </aside>
 </form>
-@if(mostrandoCliente()){<div class="fondo-modal" (click)="mostrandoCliente.set(false)"><section class="modal-cliente" role="dialog" aria-modal="true" aria-labelledby="tituloCliente" (click)="$event.stopPropagation()"><header><div><span>Cliente nuevo</span><h2 id="tituloCliente">Registrar y seleccionar cliente</h2></div><button type="button" (click)="mostrandoCliente.set(false)" aria-label="Cerrar">×</button></header><p>Completa sus datos. No necesitas definir una contraseña para esta persona.</p><form [formGroup]="formularioCliente" (ngSubmit)="registrarCliente()"><div class="grilla-cliente"><div class="campo"><label for="nombreCliente">Nombre *</label><input id="nombreCliente" formControlName="nombre"></div><div class="campo"><label for="apellidoCliente">Apellido *</label><input id="apellidoCliente" formControlName="apellido"></div><div class="campo"><label for="rutCliente">RUT *</label><input id="rutCliente" formControlName="rut" placeholder="12.345.678-9"></div><div class="campo"><label for="correoCliente">Correo *</label><input id="correoCliente" type="email" formControlName="correo"></div><div class="campo ancho"><label for="telefonoCliente">Teléfono</label><input id="telefonoCliente" formControlName="telefono" placeholder="+56 9 1234 5678"></div></div>@if(errorCliente()){<div class="mensaje error">{{errorCliente()}}</div>}<footer><button class="boton secundario" type="button" (click)="mostrandoCliente.set(false)">Cancelar</button><button class="boton" type="submit" [disabled]="formularioCliente.invalid||guardandoCliente()">{{guardandoCliente()?'Registrando…':'Registrar cliente'}}</button></footer></form></section></div>}
+@if (mostrandoCliente()) {
+  <div class="fondo-modal" (click)="mostrandoCliente.set(false)">
+    <section
+      class="modal-cliente"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tituloCliente"
+      (click)="$event.stopPropagation()"
+    >
+      <header>
+        <div>
+          <span>Cliente nuevo</span>
+          <h2 id="tituloCliente">Registrar y seleccionar cliente</h2>
+        </div>
+        <button type="button" (click)="mostrandoCliente.set(false)" aria-label="Cerrar">×</button>
+      </header>
+      <p>Completa sus datos. No necesitas definir una contraseña para esta persona.</p>
+      <form [formGroup]="formularioCliente" (ngSubmit)="registrarCliente()">
+        <div class="grilla-cliente">
+          <div class="campo">
+            <label for="nombreCliente">Nombre *</label
+            ><input id="nombreCliente" formControlName="nombre" />
+          </div>
+          <div class="campo">
+            <label for="apellidoCliente">Apellido *</label
+            ><input id="apellidoCliente" formControlName="apellido" />
+          </div>
+          <div class="campo">
+            <label for="rutCliente">RUT *</label
+            ><input id="rutCliente" formControlName="rut" placeholder="12.345.678-9" />
+          </div>
+          <div class="campo">
+            <label for="correoCliente">Correo *</label
+            ><input id="correoCliente" type="email" formControlName="correo" />
+          </div>
+          <div class="campo ancho">
+            <label for="telefonoCliente">Teléfono</label
+            ><input id="telefonoCliente" formControlName="telefono" placeholder="+56 9 1234 5678" />
+          </div>
+        </div>
+        @if (errorCliente()) {
+          <div class="mensaje error">{{ errorCliente() }}</div>
+        }
+        <footer>
+          <button class="boton secundario" type="button" (click)="mostrandoCliente.set(false)">
+            Cancelar</button
+          ><button
+            class="boton"
+            type="submit"
+            [disabled]="formularioCliente.invalid || guardandoCliente()"
+          >
+            {{ guardandoCliente() ? 'Registrando…' : 'Registrar cliente' }}
+          </button>
+        </footer>
+      </form>
+    </section>
+  </div>
+}

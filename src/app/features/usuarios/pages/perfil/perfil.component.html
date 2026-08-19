@@ -1,18 +1,19 @@
 <section class="contenedor">
   <header class="encabezado"><div><p>Cuenta personal</p><h1>Mi perfil</h1><span>Consulta y mantén actualizados tus datos de contacto.</span></div></header>
+  @if (!cargando()) { <section class="perfil-identidad"><span>{{ formulario.controls.nombre.value.charAt(0) }}{{ formulario.controls.apellido.value.charAt(0) }}</span><div><strong>{{ formulario.controls.nombre.value }} {{ formulario.controls.apellido.value }}</strong><small>{{ formulario.controls.correo.value }}</small></div><em>{{ formulario.controls.rol.value }}</em></section> }
   <div class="tarjeta-formulario">
     @if (cargando()) { <p class="estado">Cargando información…</p> } @else {
-    <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+    <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate><h2 class="titulo-seccion">Información personal</h2>
       <div class="grilla">
-        <div class="campo"><label for="nombre">Nombre</label><input id="nombre" formControlName="nombre" /><span class="error-campo">@if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) { Ingresa tu nombre. }</span></div>
-        <div class="campo"><label for="apellido">Apellido</label><input id="apellido" formControlName="apellido" /><span class="error-campo">@if (formulario.controls.apellido.touched && formulario.controls.apellido.invalid) { Ingresa tu apellido. }</span></div>
-        <div class="campo"><label for="rut">RUT</label><input id="rut" formControlName="rut" placeholder="12.345.678-9" /><span class="error-campo">@if (formulario.controls.rut.touched && formulario.controls.rut.invalid) { Ingresa un RUT con formato válido. }</span></div>
-        <div class="campo"><label for="telefono">Teléfono</label><input id="telefono" formControlName="telefono" placeholder="+56 9 1234 5678" /><span class="error-campo">@if (formulario.controls.telefono.touched && formulario.controls.telefono.invalid) { Ingresa un teléfono válido. }</span></div>
-        <div class="campo ancho"><label for="correo">Correo electrónico</label><input id="correo" type="email" formControlName="correo" /><span class="error-campo">@if (formulario.controls.correo.touched && formulario.controls.correo.invalid) { Ingresa un correo válido. }</span></div>
+        <div class="campo"><label for="nombre">Nombre</label><input id="nombre" formControlName="nombre" maxlength="100" (blur)="normalizarCampo('nombre')" /><span class="error-campo">@if (campoModificado('nombre') && formulario.controls.nombre.touched && formulario.controls.nombre.invalid) { {{ formulario.controls.nombre.hasError('required') ? 'El nombre es obligatorio.' : 'El nombre solo puede contener letras.' }} }</span></div>
+        <div class="campo"><label for="apellido">Apellido</label><input id="apellido" formControlName="apellido" maxlength="100" (blur)="normalizarCampo('apellido')" /><span class="error-campo">@if (campoModificado('apellido') && formulario.controls.apellido.touched && formulario.controls.apellido.invalid) { {{ formulario.controls.apellido.hasError('required') ? 'El apellido es obligatorio.' : 'El apellido solo puede contener letras.' }} }</span></div>
+        <div class="campo"><label for="rut">RUT</label><input id="rut" formControlName="rut" maxlength="12" inputmode="text" placeholder="12.345.678-5" (blur)="normalizarCampo('rut')" /><span class="error-campo">@if (campoModificado('rut') && formulario.controls.rut.touched && formulario.controls.rut.invalid) { Ingresa un RUT válido. }</span></div>
+        <div class="campo"><label for="telefono">Teléfono</label><input id="telefono" type="tel" inputmode="tel" maxlength="20" formControlName="telefono" placeholder="+56 9 1234 5678" (blur)="normalizarCampo('telefono')" /><span class="error-campo">@if (campoModificado('telefono') && formulario.controls.telefono.touched && formulario.controls.telefono.invalid) { Ingresa un número de teléfono válido. }</span></div>
+        <div class="campo ancho"><label for="correo">Correo electrónico</label><input id="correo" type="email" maxlength="150" formControlName="correo" (blur)="normalizarCampo('correo')" /><span class="error-campo">@if (campoModificado('correo') && formulario.controls.correo.touched && formulario.controls.correo.invalid) { Ingresa un correo electrónico válido. }</span></div>
         <div class="campo ancho"><label for="rol">Rol</label><input id="rol" formControlName="rol" readonly /><small>El rol es asignado por un administrador y no puede modificarse desde el perfil.</small><span class="error-campo"></span></div>
       </div>
       @if (mensajeError()) { <div class="mensaje error" role="alert">{{ mensajeError() }}</div> } @if (mensajeExito()) { <div class="mensaje exito" role="status">{{ mensajeExito() }}</div> }
-      <div class="acciones"><button class="boton" type="submit" [disabled]="formulario.invalid || guardando()">{{ guardando() ? 'Guardando…' : 'Guardar cambios' }}</button></div>
+      <div class="acciones"><button class="boton" type="submit" [disabled]="!puedeGuardar() || guardando()">{{ guardando() ? 'Guardando…' : 'Guardar cambios' }}</button></div>
     </form> }
   </div>
 </section>

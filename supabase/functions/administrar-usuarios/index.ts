@@ -1,20 +1,18 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { DatosPersonalesServidor, RolUsuarioServidor, datosPersonalesModificadosValidos, normalizarDatosPersonales, rolUsuarioValido } from '../_shared/validaciones-usuario.ts';
 
 const cabecerasCors = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-const roles = ['ADMINISTRADOR', 'TRABAJADOR', 'CLIENTE'] as const;
-type Rol = typeof roles[number];
-
-interface DatosActualizacion {
+interface DatosActualizacion extends DatosPersonalesServidor {
   id: string;
   nombre: string;
   apellido: string;
   rut: string;
   correo: string;
   telefono: string | null;
-  rol: Rol;
+  rol: RolUsuarioServidor;
 }
 
 type Solicitud =
@@ -30,14 +28,12 @@ const responder = (estado: number, cuerpo: Record<string, unknown>) => new Respo
 const esDatosActualizacion = (valor: unknown): valor is DatosActualizacion => {
   if (typeof valor !== 'object' || valor === null) return false;
   const datos = valor as Record<string, unknown>;
-  return typeof datos['id'] === 'string' && /^[0-9a-f-]{36}$/i.test(datos['id'])
-    && typeof datos['nombre'] === 'string' && datos['nombre'].trim().length > 0 && datos['nombre'].trim().length <= 100
-    && typeof datos['apellido'] === 'string' && datos['apellido'].trim().length > 0 && datos['apellido'].trim().length <= 100
-    && typeof datos['rut'] === 'string' && /^\d{1,2}\.?(?:\d{3}\.?){2}-[\dkK]$/.test(datos['rut'].trim())
-    && typeof datos['correo'] === 'string' && datos['correo'].trim().length <= 150
-    && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(datos['correo'].trim())
-    && (datos['telefono'] === null || (typeof datos['telefono'] === 'string' && /^$|^[+\d][\d\s()-]{7,19}$/.test(datos['telefono'])))
-    && typeof datos['rol'] === 'string' && roles.includes(datos['rol'] as Rol);
+  const tiposValidos = typeof datos['id'] === 'string' && /^[0-9a-f-]{36}$/i.test(datos['id'])
+    && typeof datos['nombre'] === 'string' && typeof datos['apellido'] === 'string'
+    && typeof datos['rut'] === 'string' && typeof datos['correo'] === 'string'
+    && (datos['telefono'] === null || typeof datos['telefono'] === 'string');
+  if (!tiposValidos) return false;
+  return rolUsuarioValido(datos['rol']);
 };
 
 Deno.serve(async (solicitud) => {
@@ -71,14 +67,16 @@ Deno.serve(async (solicitud) => {
   if (datosSolicitud.accion === 'actualizar') {
     if (!esDatosActualizacion(datosSolicitud.usuario)) return responder(400, { codigo: 'DATOS_INVALIDOS' });
     const datos = datosSolicitud.usuario;
-    const correo = datos.correo.trim().toLowerCase();
-    const rut = datos.rut.trim();
+    const personales = normalizarDatosPersonales(datos);
+    const correo = personales.correo;
+    const rut = personales.rut;
     const { data: actual, error: errorActual } = await administrador.from('perfil').select('*').eq('id', datos.id).single();
     if (errorActual || !actual) return responder(404, { codigo: 'USUARIO_NO_EXISTE' });
+    if (!datosPersonalesModificadosValidos(personales, actual)) return responder(400, { codigo: 'DATOS_INVALIDOS' });
 
     const [consultaCorreo, consultaRut] = await Promise.all([
       administrador.from('perfil').select('id').eq('correo', correo).neq('id', datos.id).limit(1),
-      administrador.from('perfil').select('id').eq('rut', rut).neq('id', datos.id).limit(1),
+      administrador.from('perfil').select('id').in('rut', [rut, rut.replaceAll('.', '')]).neq('id', datos.id).limit(1),
     ]);
     if (consultaCorreo.error || consultaRut.error) return responder(500, { codigo: 'ERROR_VALIDACION' });
     if (consultaCorreo.data?.length) return responder(409, { codigo: 'CORREO_REPETIDO' });
@@ -93,10 +91,14 @@ Deno.serve(async (solicitud) => {
       const { error } = await administrador.auth.admin.updateUserById(datos.id, { email: correo, email_confirm: true });
       if (error) return responder(409, { codigo: 'CORREO_REPETIDO' });
     }
-    const { data: actualizado, error: errorPerfil } = await administrador.from('perfil').update({
-      nombre: datos.nombre.trim(), apellido: datos.apellido.trim(), rut, correo,
-      telefono: datos.telefono?.trim() || null, rol: datos.rol, updated_at: new Date().toISOString(),
-    }).eq('id', datos.id).select('*').single();
+    const actualesNormalizados = normalizarDatosPersonales(actual);
+    const cambios: Record<string, string | null> = { updated_at: new Date().toISOString() };
+    const camposPersonales = ['nombre', 'apellido', 'rut', 'correo', 'telefono'] as const;
+    for (const campo of camposPersonales) {
+      if (personales[campo] !== actualesNormalizados[campo]) cambios[campo] = personales[campo];
+    }
+    if (datos.rol !== actual.rol) cambios['rol'] = datos.rol;
+    const { data: actualizado, error: errorPerfil } = await administrador.from('perfil').update(cambios).eq('id', datos.id).select('*').single();
     if (errorPerfil) {
       if (correoCambio) await administrador.auth.admin.updateUserById(datos.id, { email: actual.correo, email_confirm: true });
       const codigo = errorPerfil.message.includes('ULTIMO_ADMINISTRADOR') ? 'ULTIMO_ADMINISTRADOR' : 'ERROR_ACTUALIZACION';

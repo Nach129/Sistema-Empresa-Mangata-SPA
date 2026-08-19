@@ -1,6 +1,6 @@
 <div class="aplicacion">
-  <header>
-    <a routerLink="/perfil" class="marca"><span>M</span><div><strong>Mangata</strong><small>Gestión empresarial</small></div></a>
+  <aside class="barra-lateral">
+    <a routerLink="/perfil" class="marca"><img src="/assets/logo-mangata.jpg" alt="Logo de Mangata" /><div><strong>Mangata</strong><small>Gestión empresarial</small></div></a>
     <nav aria-label="Navegación principal">
       <a routerLink="/perfil" routerLinkActive="activo">Mi perfil</a>
       @if (autenticacion.perfil()?.rol === RolUsuario.Administrador) { <a routerLink="/usuarios" routerLinkActive="activo">Gestionar usuarios</a> }
@@ -9,9 +9,10 @@
       @if (autenticacion.perfil()?.rol === RolUsuario.Administrador) { <a routerLink="/reportes" routerLinkActive="activo">Reportes</a> }
     </nav>
     <div class="sesion">
-      <span>{{ autenticacion.perfil()?.nombre }} {{ autenticacion.perfil()?.apellido }}</span>
+      <span class="avatar">{{ autenticacion.perfil()?.nombre?.charAt(0) }}{{ autenticacion.perfil()?.apellido?.charAt(0) }}</span>
+      <div><strong>{{ autenticacion.perfil()?.nombre }} {{ autenticacion.perfil()?.apellido }}</strong><small>{{ autenticacion.perfil()?.rol }}</small></div>
       <button type="button" (click)="cerrarSesion()" [disabled]="cerrando()">{{ cerrando() ? 'Cerrando…' : 'Cerrar sesión' }}</button>
     </div>
-  </header>
-  <main><router-outlet /></main>
+  </aside>
+  <main class="contenido"><router-outlet /></main>
 </div>
