@@ -22,7 +22,10 @@
 }
 .encabezado h1 {
   margin: 0 0 5px;
-  font: 750 2.05rem/1.2 'Segoe UI', Inter, sans-serif;
+  font:
+    750 2.05rem/1.2 'Segoe UI',
+    Inter,
+    sans-serif;
 }
 .encabezado span {
   color: var(--color-text-secondary);
@@ -88,6 +91,31 @@ tbody tr:last-child td {
 td a {
   color: var(--color-primary);
   font-weight: 750;
+}
+.acciones-tabla {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+.accion-eliminar {
+  padding: 0;
+  border: 0;
+  color: var(--color-danger);
+  background: transparent;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+.accion-eliminar:hover {
+  text-decoration: underline;
+}
+.advertencia-eliminacion {
+  padding: 12px;
+  border-radius: var(--radius-md);
+  color: var(--color-danger) !important;
+  background: var(--color-danger-soft);
+  font-size: 0.85rem;
 }
 .badge {
   display: inline-flex;

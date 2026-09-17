@@ -1,1 +1,138 @@
-<section class="pagina"><header class="encabezado"><div><p>Operaciones</p><h1>Pedidos</h1><span>Consulta el avance y la información de cada solicitud.</span></div>@if(puedeGestionar()){<a class="boton enlace" routerLink="/pedidos/nuevo">Nuevo pedido</a>}</header><div class="filtros"><div><label for="buscar">Número o cliente</label><input id="buscar" type="search" placeholder="Buscar pedido…" (input)="actualizarBusqueda($event)"></div><div><label for="estado">Estado</label><select id="estado" (change)="actualizarEstado($event)"><option value="">Todos</option>@for(e of estados;track e){<option [value]="e">{{etiqueta(e)}}</option>}</select></div></div>@if(exito()){<div class="mensaje exito">{{exito()}}</div>}@if(error()){<div class="mensaje error">{{error()}} <button type="button" (click)="cargar()">Reintentar</button></div>}@if(cargando()){<div class="estado-vacio">Cargando pedidos…</div>}@else if(!filtrados().length){<div class="estado-vacio"><h2>No se encontraron pedidos</h2><p>Ajusta los filtros o registra el primer pedido.</p></div>}@else{<div class="tabla-wrap tarjeta"><table><thead><tr><th>Número</th><th>Cliente</th><th>Solicitud</th><th>Entrega</th><th>Estado</th><th>Total</th><th></th></tr></thead><tbody>@for(p of filtrados();track p.id){<tr><td><strong>{{p.numeroPedido}}</strong></td><td>{{p.cliente?.nombre}} {{p.cliente?.apellido}}</td><td>{{fecha(p.fechaSolicitud)}}</td><td>{{fecha(p.fechaEntrega)}}</td><td><span class="badge estado-{{p.estado.toLowerCase()}}">{{etiqueta(p.estado)}}</span></td><td><strong>{{dinero(p.total)}}</strong></td><td><a [routerLink]="['/pedidos',p.id]">Ver detalle</a></td></tr>}</tbody></table></div>}</section>
+<section class="pagina">
+  <header class="encabezado">
+    <div>
+      <p>Operaciones</p>
+      <h1>Pedidos</h1>
+      <span>Consulta el avance y la información de cada solicitud.</span>
+    </div>
+    @if (puedeGestionar()) {
+      <a class="boton enlace" routerLink="/pedidos/nuevo">Nuevo pedido</a>
+    }
+  </header>
+  <div class="filtros">
+    <div>
+      <label for="buscar">Número o cliente</label
+      ><input
+        id="buscar"
+        type="search"
+        placeholder="Buscar pedido…"
+        (input)="actualizarBusqueda($event)"
+      />
+    </div>
+    <div>
+      <label for="estado">Estado</label
+      ><select id="estado" (change)="actualizarEstado($event)">
+        <option value="">Todos</option>
+        @for (item of estados; track item) {
+          <option [value]="item">{{ etiqueta(item) }}</option>
+        }
+      </select>
+    </div>
+  </div>
+  @if (exito()) {
+    <div class="mensaje exito" role="status">{{ exito() }}</div>
+  }
+  @if (error()) {
+    <div class="mensaje error" role="alert">{{ error() }}</div>
+  }
+  @if (cargando()) {
+    <div class="estado-vacio">Cargando pedidos…</div>
+  } @else if (!filtrados().length) {
+    <div class="estado-vacio">
+      <h2>No se encontraron pedidos</h2>
+      <p>Ajusta los filtros o registra el primer pedido.</p>
+    </div>
+  } @else {
+    <div class="tabla-wrap tarjeta">
+      <table>
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Cliente</th>
+            <th>Solicitud</th>
+            <th>Entrega</th>
+            <th>Estado</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pedido of filtrados(); track pedido.id) {
+            <tr>
+              <td>
+                <strong>{{ pedido.numeroPedido }}</strong>
+              </td>
+              <td>{{ pedido.cliente?.nombre }} {{ pedido.cliente?.apellido }}</td>
+              <td>{{ fecha(pedido.fechaSolicitud) }}</td>
+              <td>{{ fecha(pedido.fechaEntrega) }}</td>
+              <td>
+                <span class="badge estado-{{ pedido.estado.toLowerCase() }}">{{
+                  etiqueta(pedido.estado)
+                }}</span>
+              </td>
+              <td>
+                <strong>{{ dinero(pedido.total) }}</strong>
+              </td>
+              <td>
+                <div class="acciones-tabla">
+                  <a [routerLink]="['/pedidos', pedido.id]">Ver detalle</a>
+                  @if (puedeGestionar()) {
+                    <button
+                      type="button"
+                      class="accion-eliminar"
+                      (click)="solicitarEliminacion(pedido)"
+                    >
+                      Eliminar
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+@if (pedidoAEliminar(); as pedido) {
+  <div
+    class="fondo-modal"
+    role="presentation"
+    (mousedown)="$event.target === $event.currentTarget && cerrarEliminacion()"
+  >
+    <section
+      class="modal-confirmacion"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tituloEliminarPedido"
+    >
+      <span class="marca-modal">!</span>
+      <h2 id="tituloEliminarPedido">Eliminar pedido</h2>
+      <p>
+        ¿Seguro que deseas eliminar el pedido <strong>{{ pedido.numeroPedido }}</strong
+        >?
+      </p>
+      <p class="advertencia-eliminacion">
+        Esta acción eliminará también su detalle e historial asociado y no se puede deshacer.
+      </p>
+      <div>
+        <button
+          class="boton secundario"
+          type="button"
+          (click)="cerrarEliminacion()"
+          [disabled]="eliminando()"
+        >
+          Cancelar</button
+        ><button
+          class="boton peligro"
+          type="button"
+          (click)="confirmarEliminacion()"
+          [disabled]="eliminando()"
+        >
+          {{ eliminando() ? 'Eliminando…' : 'Eliminar pedido' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}

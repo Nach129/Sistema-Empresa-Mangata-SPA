@@ -19,7 +19,10 @@
 }
 .encabezado-productos h1 {
   margin: 0 0 5px;
-  font: 750 2.05rem/1.2 'Segoe UI', Inter, sans-serif;
+  font:
+    750 2.05rem/1.2 'Segoe UI',
+    Inter,
+    sans-serif;
 }
 .encabezado-productos span {
   color: var(--color-text-secondary);
@@ -182,6 +185,16 @@ dd {
 }
 .accion.reactivar {
   color: var(--color-success);
+}
+.accion.eliminar {
+  color: var(--color-danger);
+}
+.advertencia-eliminacion {
+  padding: 12px;
+  border-radius: var(--radius-md);
+  color: var(--color-danger) !important;
+  background: var(--color-danger-soft);
+  font-size: 0.85rem;
 }
 .estado-vacio {
   min-height: 300px;

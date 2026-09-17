@@ -1,38 +1,119 @@
 <section class="contenedor-productos">
   <header class="encabezado-productos">
-    <div><p>Catálogo</p><h1>Productos</h1><span>Administra el catálogo disponible para los pedidos de Mangata.</span></div>
-    @if (puedeGestionar()) { <a class="boton" routerLink="/productos/nuevo">Nuevo producto</a> }
+    <div>
+      <p>Catálogo</p>
+      <h1>Productos</h1>
+      <span>Administra el catálogo disponible para los pedidos de Mangata.</span>
+    </div>
+    @if (puedeGestionar()) {
+      <a class="boton" routerLink="/productos/nuevo">Nuevo producto</a>
+    }
   </header>
 
   <div class="panel-filtros">
-    <div class="campo-busqueda"><label for="buscar">Buscar por nombre</label><input id="buscar" type="search" placeholder="Buscar producto…" (input)="actualizarBusqueda($event)" /></div>
-    <div><label for="filtroCategoria">Categoría</label><select id="filtroCategoria" (change)="actualizarCategoria($event)"><option value="">Todas</option>@for (item of categorias; track item) { <option [value]="item">{{ item.replace('_', ' ') }}</option> }</select></div>
-    <div><label for="filtroEstado">Estado</label><select id="filtroEstado" (change)="actualizarEstado($event)"><option value="TODOS">Todos</option><option value="ACTIVOS">Activos</option><option value="INACTIVOS">Inactivos</option></select></div>
+    <div class="campo-busqueda">
+      <label for="buscar">Buscar por nombre</label
+      ><input
+        id="buscar"
+        type="search"
+        placeholder="Buscar producto…"
+        (input)="actualizarBusqueda($event)"
+      />
+    </div>
+    <div>
+      <label for="filtroCategoria">Categoría</label
+      ><select id="filtroCategoria" (change)="actualizarCategoria($event)">
+        <option value="">Todas</option>
+        @for (item of categorias; track item) {
+          <option [value]="item">{{ item.replace('_', ' ') }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label for="filtroEstado">Estado</label
+      ><select id="filtroEstado" (change)="actualizarEstado($event)">
+        <option value="TODOS">Todos</option>
+        <option value="ACTIVOS">Activos</option>
+        <option value="INACTIVOS">Inactivos</option>
+      </select>
+    </div>
   </div>
 
-  @if (mensajeError()) { <div class="mensaje error" role="alert">{{ mensajeError() }} <button type="button" (click)="cargarProductos()">Reintentar</button></div> }
-  @if (mensajeExito()) { <div class="mensaje exito" role="status">{{ mensajeExito() }}</div> }
+  @if (mensajeError()) {
+    <div class="mensaje error" role="alert">
+      {{ mensajeError() }} <button type="button" (click)="cargarProductos()">Reintentar</button>
+    </div>
+  }
+  @if (mensajeExito()) {
+    <div class="mensaje exito" role="status">{{ mensajeExito() }}</div>
+  }
 
   @if (cargando()) {
-    <div class="estado-vacio"><span class="cargador"></span><h2>Cargando productos</h2><p>Estamos consultando el catálogo.</p></div>
+    <div class="estado-vacio">
+      <span class="cargador"></span>
+      <h2>Cargando productos</h2>
+      <p>Estamos consultando el catálogo.</p>
+    </div>
   } @else if (!productosFiltrados().length) {
-    <div class="estado-vacio"><div class="icono-vacio">◇</div><h2>No hay productos registrados</h2><p>@if (productos().length) { Ajusta la búsqueda o los filtros para ver resultados. } @else { Registra el primer producto para comenzar el catálogo. }</p></div>
+    <div class="estado-vacio">
+      <div class="icono-vacio">◇</div>
+      <h2>No hay productos registrados</h2>
+      <p>
+        @if (productos().length) {
+          Ajusta la búsqueda o los filtros para ver resultados.
+        } @else {
+          Registra el primer producto para comenzar el catálogo.
+        }
+      </p>
+    </div>
   } @else {
     <div class="grilla-productos">
       @for (producto of productosFiltrados(); track producto.id) {
         <article class="tarjeta-producto" [class.inactivo]="!producto.activo">
           <div class="imagen-producto">
-            @if (producto.imagenUrl) { <img [src]="producto.imagenUrl" [alt]="producto.nombre" /> } @else { <span>{{ producto.nombre.charAt(0).toUpperCase() }}</span> }
-            <span class="estado" [class.estado-inactivo]="!producto.activo">{{ producto.activo ? 'Activo' : 'Inactivo' }}</span>
+            @if (producto.imagenUrl) {
+              <img [src]="producto.imagenUrl" [alt]="producto.nombre" />
+            } @else {
+              <span>{{ producto.nombre.charAt(0).toUpperCase() }}</span>
+            }
+            <span class="estado" [class.estado-inactivo]="!producto.activo">{{
+              producto.activo ? 'Activo' : 'Inactivo'
+            }}</span>
           </div>
           <div class="contenido-producto">
             <span class="categoria">{{ producto.categoria.replace('_', ' ') }}</span>
             <h2>{{ producto.nombre }}</h2>
             <p>{{ producto.descripcion || 'Sin descripción.' }}</p>
-            <dl><div><dt>Material</dt><dd>{{ producto.material || 'No especificado' }}</dd></div><div><dt>Precio base</dt><dd class="precio">{{ formatearPrecio(producto.precioBase) }}</dd></div></dl>
+            <dl>
+              <div>
+                <dt>Material</dt>
+                <dd>{{ producto.material || 'No especificado' }}</dd>
+              </div>
+              <div>
+                <dt>Precio base</dt>
+                <dd class="precio">{{ formatearPrecio(producto.precioBase) }}</dd>
+              </div>
+            </dl>
           </div>
           @if (puedeGestionar()) {
-            <footer><a class="accion editar" [routerLink]="['/productos', producto.id, 'editar']">Editar</a><button class="accion" [class.reactivar]="!producto.activo" type="button" (click)="solicitarCambioEstado(producto)">{{ producto.activo ? 'Desactivar' : 'Reactivar' }}</button></footer>
+            <footer>
+              <a class="accion editar" [routerLink]="['/productos', producto.id, 'editar']"
+                >Editar</a
+              ><button
+                class="accion"
+                [class.reactivar]="!producto.activo"
+                type="button"
+                (click)="solicitarCambioEstado(producto)"
+              >
+                {{ producto.activo ? 'Desactivar' : 'Reactivar' }}</button
+              ><button
+                class="accion eliminar"
+                type="button"
+                (click)="solicitarEliminacion(producto)"
+              >
+                Eliminar
+              </button>
+            </footer>
           }
         </article>
       }
@@ -42,11 +123,81 @@
 
 @if (productoConfirmacion(); as producto) {
   <div class="fondo-modal" role="presentation" (click)="productoConfirmacion.set(null)">
-    <section class="modal-confirmacion" role="dialog" aria-modal="true" aria-labelledby="tituloConfirmacion" (click)="$event.stopPropagation()">
+    <section
+      class="modal-confirmacion"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tituloConfirmacion"
+      (click)="$event.stopPropagation()"
+    >
       <span class="marca-modal">{{ producto.activo ? '!' : '↻' }}</span>
-      <h2 id="tituloConfirmacion">{{ producto.activo ? 'Desactivar producto' : 'Reactivar producto' }}</h2>
-      <p>¿Deseas {{ producto.activo ? 'desactivar' : 'reactivar' }} <strong>{{ producto.nombre }}</strong>?</p>
-      <div><button class="boton secundario" type="button" (click)="productoConfirmacion.set(null)" [disabled]="cambiandoEstado()">Cancelar</button><button class="boton" type="button" (click)="confirmarCambioEstado()" [disabled]="cambiandoEstado()">{{ cambiandoEstado() ? 'Procesando…' : 'Confirmar' }}</button></div>
+      <h2 id="tituloConfirmacion">
+        {{ producto.activo ? 'Desactivar producto' : 'Reactivar producto' }}
+      </h2>
+      <p>
+        ¿Deseas {{ producto.activo ? 'desactivar' : 'reactivar' }}
+        <strong>{{ producto.nombre }}</strong
+        >?
+      </p>
+      <div>
+        <button
+          class="boton secundario"
+          type="button"
+          (click)="productoConfirmacion.set(null)"
+          [disabled]="cambiandoEstado()"
+        >
+          Cancelar</button
+        ><button
+          class="boton"
+          type="button"
+          (click)="confirmarCambioEstado()"
+          [disabled]="cambiandoEstado()"
+        >
+          {{ cambiandoEstado() ? 'Procesando…' : 'Confirmar' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}
+
+@if (productoAEliminar(); as producto) {
+  <div
+    class="fondo-modal"
+    role="presentation"
+    (mousedown)="$event.target === $event.currentTarget && cerrarEliminacion()"
+  >
+    <section
+      class="modal-confirmacion"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tituloEliminarProducto"
+    >
+      <span class="marca-modal">!</span>
+      <h2 id="tituloEliminarProducto">Eliminar producto</h2>
+      <p>
+        ¿Seguro que deseas eliminar <strong>“{{ producto.nombre }}”</strong>?
+      </p>
+      <p class="advertencia-eliminacion">
+        Esta acción no se puede deshacer. Si el producto pertenece a un pedido histórico, el sistema
+        impedirá eliminarlo.
+      </p>
+      <div>
+        <button
+          class="boton secundario"
+          type="button"
+          (click)="cerrarEliminacion()"
+          [disabled]="eliminando()"
+        >
+          Cancelar</button
+        ><button
+          class="boton peligro"
+          type="button"
+          (click)="confirmarEliminacion()"
+          [disabled]="eliminando()"
+        >
+          {{ eliminando() ? 'Eliminando…' : 'Eliminar producto' }}
+        </button>
+      </div>
     </section>
   </div>
 }
